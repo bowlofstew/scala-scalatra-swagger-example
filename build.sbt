@@ -38,6 +38,9 @@ libraryDependencies ++= Seq(
   "javax.servlet"       %   "javax.servlet-api" % "3.1.0"             % "provided"
 )
 
+mainClass in Compile := Some("com.svinci.professionals.api.JettyLauncher")
+mainClass in assembly := Some("com.svinci.professionals.api.JettyLauncher")
+
 assemblyJarName in assembly := "professionals-api.jar"
 
 enablePlugins(JettyPlugin)

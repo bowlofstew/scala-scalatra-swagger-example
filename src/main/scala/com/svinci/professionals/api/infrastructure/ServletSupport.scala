@@ -1,6 +1,7 @@
 package com.svinci.professionals.api.infrastructure
 
 import java.util.{ Date, UUID }
+import javax.servlet.http.HttpServletRequest
 
 import org.json4s.{ DefaultFormats, Formats }
 import org.scalatra._
@@ -32,11 +33,27 @@ trait ServletSupport extends ScalatraServlet with JacksonJsonSupport with Swagge
   protected implicit lazy val jsonFormats: Formats = DefaultFormats
 
   /**
+   * From the servlet request, check if the client is authenticated.
+   *
+   * This function can be exposed as protected as is, and let the servlets that extend ServletSupport use it,
+   * but that wouldn't be convenient in a real situation, as checking if an authentication token is actually valid
+   * would have performance implications (query to a database, REST API call, etc.).
+   */
+  private[this] def isAuthenticated()(implicit request: HttpServletRequest): Boolean = {
+    val authenticationToken: Option[String] = Option(request.getHeader("X-PROFESSIONALS-API-TOKEN"))
+
+    // Here you may perform token validation calling an authentication service or something.
+    // We'll keep it simple in this example, and we'll assume the client is authenticated if the header is present.
+    authenticationToken.isDefined
+  }
+
+  /**
    * Before every request made to a servlet that extends this trait, the function passed to `before()` will be executed.
    * We are using this to :
    *   - Set the Content-Type header for every request, as we are always going to return JSON.
    *   - Set the date to the request, so we can calculate spent time afterwards.
    *   - Generate a transaction identifier, an add it to the MDC, so we know which lines of logs were triggered by which request.
+   *   - Check if the client is authenticated and add the flag to the request attributes.
    *   - Log that a request arrived.
    */
   before() {
@@ -44,6 +61,9 @@ trait ServletSupport extends ScalatraServlet with JacksonJsonSupport with Swagge
     contentType = "application/json"
     request.setAttribute("startTime", new Date().getTime)
     MDC.put("tid", UUID.randomUUID().toString.substring(0, 8))
+
+    val authenticated = isAuthenticated()
+    request.setAttribute("authenticated", authenticated)
 
     logger.info(s"Received request ${request.getMethod} at ${request.getRequestURI}")
 

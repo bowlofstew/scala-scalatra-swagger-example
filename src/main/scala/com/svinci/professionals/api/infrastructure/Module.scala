@@ -1,6 +1,7 @@
 package com.svinci.professionals.api.infrastructure
 
 import com.svinci.professionals.api.domain.docs.DocsServlet
+import com.svinci.professionals.api.domain.professional.DefaultProfessionalServletComponent
 import com.svinci.professionals.api.domain.status.DefaultStatusServletComponent
 
 /**
@@ -9,6 +10,11 @@ import com.svinci.professionals.api.domain.status.DefaultStatusServletComponent
  * In this object we'll hold all the instances required by our application.
  */
 object Module {
+
+  /**
+   * Default instance of ProfessionalServlet
+   */
+  def professionalServlet: DefaultProfessionalServletComponent.ProfessionalServlet = DefaultProfessionalServletComponent.professionalServletInstance
 
   /**
    * Default instance of StatusServlet.

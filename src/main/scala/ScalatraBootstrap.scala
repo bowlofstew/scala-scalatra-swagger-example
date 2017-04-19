@@ -20,6 +20,7 @@ class ScalatraBootstrap extends LifeCycle {
     logger.info(context.getContextPath)
 
     logger.info("Mounting Changas API servlets.")
+    context.mount(Module.professionalServlet, "/professionals-api/professionals", "professionals")
     context.mount(Module.statusServlet, "/professionals-api/status", "status")
     context.mount(Module.docsServlet, "/docs", "docs")
     logger.info(s"API started.")
